@@ -1,0 +1,34 @@
+pipeline {
+    agent {
+        label "worker"
+    }
+
+    tools {
+        maven "maven"
+    }
+
+    stages {
+        stage ('checkout'){
+            steps {
+                git 'https://github.com/iamdineshgautam/jenkins-practices.git'
+                sh '''
+                    echo "checkout stage succesfull"
+                '''
+            }
+        }
+
+        stage ('build') {
+            steps {
+                sh '''
+                    mvn clean package
+                    echo "build stage successfull"
+                '''
+            }
+            post {
+                success {
+                    archiveArtifacts artifacts: '**/target/*.war', fingerprint: true
+                }
+            }
+        }
+    }
+}
