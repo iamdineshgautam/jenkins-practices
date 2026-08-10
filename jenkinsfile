@@ -3,25 +3,29 @@ pipeline {
         label "worker"
     }
 
+    // environment {
+    //     my_aws_credentials = credentials('aws-access')
+    // }
+
     tools {
         maven "maven"
     }
 
     stages {
-        stage ('checkout'){
+        stage('checkout'){
             steps {
-                git 'https://github.com/iamdineshgautam/jenkins-practices.git'
+                git 'https://github.com/mayurpandit25/student-management.git'
                 sh '''
-                    echo "checkout stage succesfull"
+                echo "clonning is successful"
                 '''
             }
         }
 
-        stage ('build') {
+        stage('Build'){
             steps {
                 sh '''
-                    mvn clean package
-                    echo "build stage successfull"
+                mvn clean package
+                echo "build is successful"
                 '''
             }
             post {
@@ -30,5 +34,13 @@ pipeline {
                 }
             }
         }
+
+        // stage('Artifact to S3'){
+        //     steps {
+        //         sh '''
+        //         aws s3 cp target/*.war s3://mayurcbz.space/Artifact/student.war
+        //         '''
+        //     }
+        // }
     }
 }
