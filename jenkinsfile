@@ -3,9 +3,9 @@ pipeline {
         label "worker"
     }
 
-    // environment {
-    //     my_aws_credentials = credentials('aws-access')
-    // }
+    environment {
+        my_aws_credentials = credentials('aws-access')
+    }
 
     tools {
         maven "maven"
@@ -35,12 +35,12 @@ pipeline {
             }
         }
 
-        // stage('Artifact to S3'){
-        //     steps {
-        //         sh '''
-        //         aws s3 cp target/*.war s3://deploywithdinesh.space/Artifact/student.war
-        //         '''
-        //     }
-        // }
+        stage('Artifact to S3'){
+            steps {
+                sh '''
+                aws s3 cp target/*.war s3://deploywithdinesh.space/Artifact/student.war
+                '''
+            }
+        }
     }
 }
