@@ -1,0 +1,55 @@
+
+version: "3"
+
+services:
+
+  sonarqube:
+    image: sonarqube:lts-community
+    depends_on:
+      - db
+
+    ports:
+      - "9000:9000"
+
+    environment:
+      - SONAR_JDBC_URL=jdbc:postgresql://db:5432/sonar
+      - SONAR_JDBC_USERNAME=sonar
+      - SONAR_JDBC_PASSWORD=sonar
+
+      # Limit Java Heap to 1GB for Compute Engine
+      - SONAR_CE_JAVA_OPTS=-Xmx1g -Xms1g
+
+      # Limit Java Heap to 1GB for Web Server
+      - SONAR_WEB_JAVA_OPTS=-Xmx1g -Xms1g
+
+    ulimits:
+      nofile:
+        soft: 65536
+        hard: 65536
+
+    volumes:
+      - sonarqube_data:/opt/sonarqube/data
+      - sonarqube_extensions:/opt/sonarqube/extensions
+      - sonarqube_logs:/opt/sonarqube/logs
+
+
+  db:
+    image: postgres:13
+
+    environment:
+      - POSTGRES_USER=sonar
+      - POSTGRES_PASSWORD=sonar
+      - POSTGRES_DB=sonar
+
+    volumes:
+      - postgresql:/var/lib/postgresql/data
+
+    # Increase PostgreSQL connections
+    command: postgres -c 'max_connections=200'
+
+
+volumes:
+  sonarqube_data:
+  sonarqube_extensions:
+  sonarqube_logs:
+  postgresql:
