@@ -38,7 +38,7 @@ pipeline {
         stage('Artifact to S3'){
             steps {
                 sh '''
-                aws s3 cp target/*.war s3://deploywithdinesh.space/Artifact/student.war
+                aws s3 cp target/*.war s3://deploywithdinesh.space/Artifact/student.war    
                 '''
             }
         }
@@ -48,6 +48,25 @@ pipeline {
                 withSonarQubeEnv('sonar') {
                   sh 'mvn sonar:sonar'
                 } 
+            }
+        }
+
+        stage('Docker Build'){
+            steps {
+                sh '''
+                docker build -t student:latest .
+                docker images
+                '''
+            }
+        }
+
+        stage('Push Image To ECR'){
+            steps {
+                sh '''
+                aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 231101979902.dkr.ecr.ap-south-1.amazonaws.com
+                docker tag student:latest 231101979902.dkr.ecr.ap-south-1.amazonaws.com/student:latest
+                docker push 231101979902.dkr.ecr.ap-south-1.amazonaws.com/student:latest
+                '''
             }
         }
     }
